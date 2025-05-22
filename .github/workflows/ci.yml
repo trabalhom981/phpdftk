@@ -29,8 +29,6 @@ jobs:
             fail-fast: false
             matrix:
                 php-version:
-                    - "8.1"
-                    - "8.2"
                     - "8.3"
                     - "8.4"
 
@@ -45,6 +43,9 @@ jobs:
             - uses: "ramsey/composer-install@v3"
               with:
                   composer-options: "--prefer-dist"
+
+            - name: Install PDFtk
+              run: apt install pdftk
 
             - name: Run tests
               run: vendor/bin/phpunit
