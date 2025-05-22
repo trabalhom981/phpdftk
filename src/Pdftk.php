@@ -2,6 +2,10 @@
 
 namespace Qdequippe\PHPDFtk;
 
+use Qdequippe\PHPDFtk\Field\Button;
+use Qdequippe\PHPDFtk\Field\Choice;
+use Qdequippe\PHPDFtk\Field\FieldInterface;
+use Qdequippe\PHPDFtk\Field\Text;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -39,6 +43,89 @@ final readonly class Pdftk
         }
 
         return $process->getOutput();
+    }
+
+    /**
+     * @param string $pdfFilePath
+     * @return FieldInterface[]
+     */
+    public function dumpDataFields(string $pdfFilePath): array
+    {
+        $executablePath = $this->executablePath ?? $this->findExecutablePath();
+
+        $command = [$executablePath, $pdfFilePath, 'dump_data_fields_utf8', 'output', '-'];
+
+        $process = new Process($command);
+        $process->run();
+
+        if (false === $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $output = $process->getOutput();
+
+        $fields = [];
+
+        $fieldsData = (explode("---", trim($output)));
+        $fieldsData = array_filter($fieldsData);
+        foreach ($fieldsData as $fieldData) {
+            $fieldParts = explode("\n", $fieldData);
+            $fieldParts = array_filter($fieldParts);
+            $parts = [];
+            foreach ($fieldParts as $fieldPart) {
+                [$fieldPartName, $fieldPartValue] = explode(": ", $fieldPart);
+
+                if ('FieldStateOption' !== $fieldPartName) {
+                    $parts[$fieldPartName] = $fieldPartValue;
+
+                    continue;
+                }
+
+                $parts[$fieldPartName][] = $fieldPartValue;
+            }
+
+            $field = null;
+            switch ($parts['FieldType']) {
+                case 'Text':
+                    $field = new Text(
+                        name: $parts['FieldName'],
+                        nameAlt: $parts['FieldNameAlt'] ?? null,
+                        flags: $parts['FieldFlags'] ?? null,
+                        justification: $parts['FieldJustification'] ?? null,
+                        value: $parts['FieldValue'] ?? null,
+                    );
+                    break;
+                case 'Button':
+                    $field = new Button(
+                        name: $parts['FieldName'],
+                        nameAlt: $parts['FieldNameAlt'] ?? null,
+                        flags: $parts['FieldFlags'] ?? null,
+                        justification: $parts['FieldJustification'] ?? null,
+                        value: $parts['FieldValue'] ?? null,
+                        stateOption: $parts['FieldStateOption'] ?? [],
+                    );
+                    break;
+                case 'Choice':
+                    $field = new Choice(
+                        name: $parts['FieldName'],
+                        nameAlt: $parts['FieldNameAlt'] ?? null,
+                        flags: $parts['FieldFlags'] ?? null,
+                        justification: $parts['FieldJustification'] ?? null,
+                        value: $parts['FieldValue'] ?? null,
+                        valueDefault: $parts['FieldValueDefault'] ?? null,
+                        stateOption: $parts['FieldStateOption'] ?? [],
+                    );
+                    break;
+            }
+
+            if (null === $field) {
+                continue;
+            }
+
+            $fields[] = $field;
+        }
+
+        return $fields;
     }
 
     private function findExecutablePath(): string
