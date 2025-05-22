@@ -12,3 +12,6 @@ cs_fix:
 
 cs_check:
 	$(DOCKER_COMPOSE) run --rm php $(PHP_CS_FIXER) check --diff
+
+test:
+	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpunit --no-coverage

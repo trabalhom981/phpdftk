@@ -1,6 +1,4 @@
-FROM php:8.4-cli
-
-ENV PHP_CS_FIXER_IGNORE_ENV=1
+FROM php:8.3-cli
 
 RUN apt-get update && apt-get install -y \
     pdftk \
