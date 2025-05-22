@@ -1,9 +1,9 @@
 <?php
 
-namespace Qdequippe\Phpdftk\Tests;
+namespace Qdequippe\PHPDFtk\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Qdequippe\Phpdftk\Pdftk;
+use Qdequippe\PHPDFtk\Pdftk;
 
 final class PdftkTest extends TestCase
 {
@@ -11,20 +11,17 @@ final class PdftkTest extends TestCase
     {
         // Arrange
         $pdftk = new Pdftk();
-        $inputFilePath = __DIR__.'/data/form.pdf';
-        $formDataFilePath = __DIR__.'/data/form_date.xfdf';
-        $outputFilePath = sys_get_temp_dir().'/phppdf-output.pdf';
-        $expectedOutput = file_get_contents(__DIR__.'/data/output.pdf');
+
+        $inputFilePath = __DIR__ . '/data/form.pdf';
+        $formDataFilePath = __DIR__ . '/data/form_date.xfdf';
 
         // Act
-        $pdftk->fillForm(
-            inputFilePath: $inputFilePath,
+        $data = $pdftk->fillForm(
+            pdfFilePath: $inputFilePath,
             formDataFilePath: $formDataFilePath,
-            outputFilePath: $outputFilePath,
         );
 
         // Assert
-        $this->assertFileExists($outputFilePath);
-        $this->assertStringEqualsFile($outputFilePath, $expectedOutput);
+        $this->assertStringEqualsFile(__DIR__ . '/data/output.pdf', $data);
     }
 }

@@ -10,20 +10,22 @@ final readonly class Pdftk
 {
     public function __construct(
         private ?string $executablePath = null,
-    ) {
-
-    }
+    ) {}
 
     /**
-     * @param string $inputFilePath Input PDF file path
-     * @param string $outputFilePath Output PDF file path
-     * @return void
+     * Fills the input PDF’s form fields with the data from an FDF file or XFDF file.
+     *
+     * @param string $pdfFilePath Filepath to a PDF file
+     * @param string $formDataFilePath Filepath to the form data
+     * @param bool $flatten Use this option to merge an input PDF’s interactive form fields (and their data) with the PDF’s pages.
+     *
+     * @return string PDF filled with form data
      */
-    public function fillForm(string $inputFilePath, string $formDataFilePath, string $outputFilePath, bool $flatten = false): void
+    public function fillForm(string $pdfFilePath, string $formDataFilePath, bool $flatten = false): string
     {
         $executablePath = $this->executablePath ?? $this->findExecutablePath();
 
-        $command = [$executablePath, $inputFilePath, 'fill_form', $formDataFilePath, 'output', $outputFilePath];
+        $command = [$executablePath, $pdfFilePath, 'fill_form', $formDataFilePath, 'output', '-'];
 
         if ($flatten) {
             $command[] = 'flatten';
@@ -35,6 +37,8 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
+
+        return $process->getOutput();
     }
 
     private function findExecutablePath(): string
