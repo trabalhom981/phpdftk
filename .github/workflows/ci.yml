@@ -45,7 +45,7 @@ jobs:
                   composer-options: "--prefer-dist"
 
             - name: Install PDFtk
-              run: apt install pdftk
+              run: sudo apt install -y pdftk
 
             - name: Run tests
               run: vendor/bin/phpunit
