@@ -1,6 +1,10 @@
 PHPDFTK
 =======
 
+[![CI](https://github.com/qdequippe/phpdftk/actions/workflows/ci.yml/badge.svg)](https://github.com/qdequippe/phpdftk/actions/workflows/ci.yml)
+[![Latest Stable Version](https://poser.pugx.org/qdequippe/phpdftk/v/stable)](https://packagist.org/packages/qdequippe/phpdftk)
+[![License](https://poser.pugx.org/qdequippe/phpdftk/license)](https://packagist.org/packages/qdequippe/phpdftk)
+
 PHP wrapper for [PDFtk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/).
 
 Inspired by [Kevsoft.PDFtk](https://github.com/kevbite/Kevsoft.PDFtk) and [pypdftk](https://github.com/revolunet/pypdftk).
