@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Qdequippe\PHPDFtk\Field;
 
 abstract class Field implements FieldInterface

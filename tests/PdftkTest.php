@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Qdequippe\PHPDFtk\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -64,13 +66,13 @@ final class PdftkTest extends TestCase
         foreach ($fields as $field) {
             switch ($field->getType()) {
                 case Type::Choice:
-                    $countChoice++;
+                    ++$countChoice;
                     break;
                 case Type::Text:
-                    $countText++;
+                    ++$countText;
                     break;
                 case Type::Button:
-                    $countButton++;
+                    ++$countButton;
                     break;
             }
         }

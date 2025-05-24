@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Qdequippe\PHPDFtk\Field;
 
 final class Choice extends Field

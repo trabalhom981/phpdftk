@@ -17,11 +17,24 @@ jobs:
                   php-version: '8.3'
 
             - uses: "ramsey/composer-install@v3"
-              with:
-                  composer-options: "--prefer-dist"
 
             - name: PHP CS Fixer
               run: ./vendor/bin/php-cs-fixer check
+
+    rector:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: 'Setup PHP'
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.3'
+
+            - uses: "ramsey/composer-install@v3"
+
+            - name: PHP CS Fixer
+              run: ./vendor/bin/rector
 
     test:
         runs-on: ubuntu-latest

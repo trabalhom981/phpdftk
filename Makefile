@@ -25,4 +25,10 @@ phpstan:
 phpstan-baseline:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpstan analyse -b
 
-quality: cs_fix test
+rector:
+	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/rector --dry-run
+
+rectify:
+	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/rector
+
+quality: rector cs_check test
