@@ -3,9 +3,9 @@
 namespace Qdequippe\PHPDFtk\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Qdequippe\PHPDFtk\Exception\ProcessFailedException;
 use Qdequippe\PHPDFtk\Field\Type;
 use Qdequippe\PHPDFtk\Pdftk;
-use Qdequippe\PHPDFtk\ProcessFailedException;
 
 final class PdftkTest extends TestCase
 {
@@ -166,6 +166,21 @@ final class PdftkTest extends TestCase
         $this->assertStringEqualsFile(
             __DIR__ . '/data/sample_compressed.pdf',
             $compressed,
+        );
+    }
+
+    public function testRepair(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $repaired = $pdftk->repair(__DIR__ . '/data/sample.pdf');
+
+        // Assert
+        $this->assertStringEqualsFile(
+            __DIR__ . '/data/sample_repaired.pdf',
+            $repaired,
         );
     }
 }

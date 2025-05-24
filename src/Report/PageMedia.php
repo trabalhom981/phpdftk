@@ -1,6 +1,6 @@
 <?php
 
-namespace Qdequippe\PHPDFtk;
+namespace Qdequippe\PHPDFtk\Report;
 
 final readonly class PageMedia
 {

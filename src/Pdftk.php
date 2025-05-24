@@ -2,10 +2,16 @@
 
 namespace Qdequippe\PHPDFtk;
 
+use Qdequippe\PHPDFtk\Exception\ExecutableNotFoundException;
+use Qdequippe\PHPDFtk\Exception\ProcessFailedException;
 use Qdequippe\PHPDFtk\Field\Button;
 use Qdequippe\PHPDFtk\Field\Choice;
 use Qdequippe\PHPDFtk\Field\FieldInterface;
 use Qdequippe\PHPDFtk\Field\Text;
+use Qdequippe\PHPDFtk\Report\Bookmark;
+use Qdequippe\PHPDFtk\Report\Info;
+use Qdequippe\PHPDFtk\Report\PageMedia;
+use Qdequippe\PHPDFtk\Report\Report;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -25,7 +31,7 @@ final readonly class Pdftk
         $executablePath = $executableFinder->find('pdftk');
 
         if (null === $executablePath) {
-            throw new \RuntimeException('Pdftk not found');
+            throw new ExecutableNotFoundException();
         }
 
         return $executablePath;
@@ -42,7 +48,7 @@ final readonly class Pdftk
      *
      * @throws ProcessFailedException
      */
-    public function fillForm(string $pdfFilePath, string $formDataFilePath, bool $flatten = false): string
+    public function fillForm(string $pdfFilePath, string $formDataFilePath, bool $flatten = true): string
     {
         $executablePath = $this->getExecutablePath();
 
@@ -445,6 +451,34 @@ final readonly class Pdftk
 
         $command = [$executablePath, $pdfFilePath, 'output', '-', 'compress'];
         ;
+
+        $process = new Process($command);
+        $process->run();
+
+        if (false === $process->isSuccessful()) {
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
+        }
+
+        return $process->getOutput();
+    }
+
+    /**
+     * Repairs the specified PDF file and returns the repaired output.
+     *
+     * @param string $pdfFilePath The file path of the PDF to be repaired.
+     *
+     * @return string The repaired content of the PDF file.
+     *
+     * @throws ProcessFailedException
+     */
+    public function repair(string $pdfFilePath): string
+    {
+        $executablePath = $this->getExecutablePath();
+
+        $command = [$executablePath, $pdfFilePath, 'output', '-'];
 
         $process = new Process($command);
         $process->run();

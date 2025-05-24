@@ -1,5 +1,5 @@
 <?php
 
-namespace Qdequippe\PHPDFtk;
+namespace Qdequippe\PHPDFtk\Exception;
 
 final class ProcessFailedException extends \RuntimeException {}
