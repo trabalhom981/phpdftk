@@ -95,4 +95,16 @@ final class PdftkTest extends TestCase
         $this->assertCount(1, $report->getBookmarks());
         $this->assertCount(1, $report->getPageMedias());
     }
+
+    public function testGenerateFdf(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $fdf = $pdftk->generateFdf(__DIR__ . '/data/form.pdf');
+
+        // Assert
+        $this->assertStringEqualsFile(__DIR__ . '/data/expected.fdf', $fdf);
+    }
 }

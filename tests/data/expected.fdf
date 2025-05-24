@@ -1,0 +1,46 @@
+%FDF-1.2
+%‚„œ”
+1 0 obj
+
+<<
+/FDF 
+<<
+/Fields [
+<<
+/T (Option 1)
+/V /
+>> 
+<<
+/T (Option 2)
+/V /
+>> 
+<<
+/T (Age\t of Dependent)
+/V ()
+>> 
+<<
+/T (Name of Dependent)
+/V ()
+>> 
+<<
+/T (Dropdown2)
+/V (Choice 1)
+>> 
+<<
+/T (Option 3)
+/V /
+>> 
+<<
+/T (Name)
+/V ()
+>>]
+>>
+>>
+endobj
+
+trailer
+
+<<
+/Root 1 0 R
+>>
+%%EOF
