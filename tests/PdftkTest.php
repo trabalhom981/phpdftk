@@ -107,4 +107,18 @@ final class PdftkTest extends TestCase
         // Assert
         $this->assertStringEqualsFile(__DIR__ . '/data/expected.fdf', $fdf);
     }
+
+    public function testBurst(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $pdftk->burst(__DIR__ . '/data/sample-multi-pages.pdf', 'build');
+
+        // Assert
+        $this->assertFileExists('build/page_01.pdf');
+        $this->assertFileExists('build/page_02.pdf');
+        $this->assertFileExists('build/page_03.pdf');
+    }
 }
