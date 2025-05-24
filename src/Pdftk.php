@@ -48,7 +48,7 @@ final readonly class Pdftk
      *
      * @return string PDF filled with form data
      *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function fillForm(string $pdfFilePath, string $formDataFilePath, bool $flatten = true): string
     {
@@ -81,7 +81,7 @@ final readonly class Pdftk
      *
      * @return FieldInterface[]
      *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function dumpDataFields(string $pdfFilePath, bool $utf8 = true): array
     {
@@ -174,7 +174,7 @@ final readonly class Pdftk
      *
      * @return string PDF concatenated from input PDFs
      *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function cat(string ...$pdfFilePaths): string
     {
@@ -204,13 +204,13 @@ final readonly class Pdftk
     }
 
     /**
-     * Reads a single input PDF file and reports its metadata, bookmarks (a/k/a outlines), page metrics (media, rotation and labels) and other data.
+     * Reads a single input PDF file and reports its metadata, bookmarks (outlines), page metrics (media, rotation and labels) and other data.
      *
      * @param string $pdfFilePath Filepath to a PDF file
      * @param bool $utf8 Output is encoded as UTF-8
      *
      *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function dumpData(string $pdfFilePath, bool $utf8 = true): Report
     {
@@ -357,7 +357,7 @@ final readonly class Pdftk
      *
      * @return string FDF file generated from input PDF
      *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function generateFdf(string $pdfFilePath): string
     {
@@ -385,8 +385,7 @@ final readonly class Pdftk
      * @param string|null $outputDir Output directory (default: system temp dir)
      * @param string $pageNamePrefixOutput Prefix for the output page filenames (default: page_)
      *
-     *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function burst(string $pdfFilePath, string $outputDir = null, string $pageNamePrefixOutput = 'page_'): void
     {
@@ -414,14 +413,13 @@ final readonly class Pdftk
      *
      * @return string Uncompressed PDF content.
      *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function uncompress(string $pdfFilePath): string
     {
         $executablePath = $this->getExecutablePath();
 
         $command = [$executablePath, $pdfFilePath, 'output', '-', 'uncompress'];
-        ;
 
         $process = new Process($command);
         $process->run();
@@ -443,14 +441,13 @@ final readonly class Pdftk
      *
      * @return string The compressed content of the PDF file.
      *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function compress(string $pdfFilePath): string
     {
         $executablePath = $this->getExecutablePath();
 
         $command = [$executablePath, $pdfFilePath, 'output', '-', 'compress'];
-        ;
 
         $process = new Process($command);
         $process->run();
@@ -472,13 +469,71 @@ final readonly class Pdftk
      *
      * @return string The repaired content of the PDF file.
      *
-     * @throws ProcessFailedException
+     * @throws ProcessFailedException If the process execution is unsuccessful.
      */
     public function repair(string $pdfFilePath): string
     {
         $executablePath = $this->getExecutablePath();
 
         $command = [$executablePath, $pdfFilePath, 'output', '-'];
+
+        $process = new Process($command);
+        $process->run();
+
+        if (false === $process->isSuccessful()) {
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode() ?? 0,
+            );
+        }
+
+        return $process->getOutput();
+    }
+
+    /**
+     * Applies a background PDF to the specified PDF file and returns the resulting output.
+     *
+     * @param string $pdfFilePath The file path of the PDF to which the background is to be applied.
+     * @param string $backgroundPdfFilePath The file path of the background PDF to be used.
+     *
+     * @return string The resulting output of the PDF with the background applied.
+     *
+     * @throws ProcessFailedException If the process execution is unsuccessful.
+     */
+    public function background(string $pdfFilePath, string $backgroundPdfFilePath): string
+    {
+        $executablePath = $this->getExecutablePath();
+
+        $command = [$executablePath, $pdfFilePath, 'background', $backgroundPdfFilePath, 'output', '-'];
+
+        $process = new Process($command);
+        $process->run();
+
+        if (false === $process->isSuccessful()) {
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode() ?? 0,
+            );
+        }
+
+        return $process->getOutput();
+    }
+
+    /**
+     * Applies a stamp to the specified PDF file and returns the stamped output.
+     *
+     * @param string $pdfFilePath The file path of the PDF to which the stamp will be applied.
+     * @param string $stampPdfFilePath The file path of the PDF containing the stamp to be applied.
+     *
+     * @return string The stamped content of the PDF file.
+     *
+     * @throws ProcessFailedException If the process execution is unsuccessful.
+     */
+    public function stamp(string $pdfFilePath, string $stampPdfFilePath): string
+    {
+        $executablePath = $this->getExecutablePath();
+
+        $command = [$executablePath, $pdfFilePath, 'stamp', $stampPdfFilePath, 'output', '-'];
 
         $process = new Process($command);
         $process->run();

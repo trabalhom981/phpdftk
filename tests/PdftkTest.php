@@ -185,4 +185,40 @@ final class PdftkTest extends TestCase
             $repaired,
         );
     }
+
+    public function testBackground(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $result = $pdftk->background(
+            __DIR__ . '/data/form.pdf',
+            __DIR__ . '/data/sample.pdf'
+        );
+
+        // Assert
+        $this->assertStringEqualsFile(
+            __DIR__ . '/data/background.pdf',
+            $result,
+        );
+    }
+
+    public function testStamp(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $result = $pdftk->background(
+            __DIR__ . '/data/form.pdf',
+            __DIR__ . '/data/sample.pdf'
+        );
+
+        // Assert
+        $this->assertStringEqualsFile(
+            __DIR__ . '/data/stamp.pdf',
+            $result,
+        );
+    }
 }
