@@ -5,9 +5,26 @@ namespace Qdequippe\PHPDFtk\Tests;
 use PHPUnit\Framework\TestCase;
 use Qdequippe\PHPDFtk\Field\Type;
 use Qdequippe\PHPDFtk\Pdftk;
+use Qdequippe\PHPDFtk\ProcessFailedException;
 
 final class PdftkTest extends TestCase
 {
+    public function testProcessFailed(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Assert
+        $this->expectException(ProcessFailedException::class);
+        $this->expectExceptionMessageMatches('/^Error: Unable to find file/');
+
+        // Act
+        $pdftk->fillForm(
+            pdfFilePath: 'non-existing-file.pdf',
+            formDataFilePath: 'non-existing-file.fdf',
+        );
+    }
+
     public function testFormFill(): void
     {
         // Arrange

@@ -6,7 +6,6 @@ use Qdequippe\PHPDFtk\Field\Button;
 use Qdequippe\PHPDFtk\Field\Choice;
 use Qdequippe\PHPDFtk\Field\FieldInterface;
 use Qdequippe\PHPDFtk\Field\Text;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -16,6 +15,22 @@ final readonly class Pdftk
         private ?string $executablePath = null,
     ) {}
 
+    private function getExecutablePath(): string
+    {
+        if (null !== $this->executablePath) {
+            return $this->executablePath;
+        }
+
+        $executableFinder = new ExecutableFinder();
+        $executablePath = $executableFinder->find('pdftk');
+
+        if (null === $executablePath) {
+            throw new \RuntimeException('Pdftk not found');
+        }
+
+        return $executablePath;
+    }
+
     /**
      * Fills the input PDF’s form fields with the data from an FDF file or XFDF file.
      *
@@ -24,6 +39,8 @@ final readonly class Pdftk
      * @param bool $flatten Use this option to merge an input PDF’s interactive form fields (and their data) with the PDF’s pages.
      *
      * @return string PDF filled with form data
+     *
+     * @throws ProcessFailedException
      */
     public function fillForm(string $pdfFilePath, string $formDataFilePath, bool $flatten = false): string
     {
@@ -39,7 +56,10 @@ final readonly class Pdftk
         $process->run();
 
         if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
         }
 
         return $process->getOutput();
@@ -52,6 +72,8 @@ final readonly class Pdftk
      * @param bool $utf8 Output is encoded as UTF-8
      *
      * @return FieldInterface[]
+     *
+     * @throws ProcessFailedException
      */
     public function dumpDataFields(string $pdfFilePath, bool $utf8 = true): array
     {
@@ -65,7 +87,10 @@ final readonly class Pdftk
         $process->run();
 
         if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
         }
 
         $output = $process->getOutput();
@@ -140,6 +165,8 @@ final readonly class Pdftk
      * @param string ...$pdfFilePaths Filepath to PDF files.
      *
      * @return string PDF concatenated from input PDFs
+     *
+     * @throws ProcessFailedException
      */
     public function cat(string ...$pdfFilePaths): string
     {
@@ -159,7 +186,10 @@ final readonly class Pdftk
         $process->run();
 
         if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
         }
 
         return $process->getOutput();
@@ -172,6 +202,8 @@ final readonly class Pdftk
      * @param bool $utf8 Output is encoded as UTF-8
      *
      * @return Report
+     *
+     * @throws ProcessFailedException
      */
     public function dumpData(string $pdfFilePath, bool $utf8 = true): Report
     {
@@ -185,7 +217,10 @@ final readonly class Pdftk
         $process->run();
 
         if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
         }
 
         $output = $process->getOutput();
@@ -314,6 +349,8 @@ final readonly class Pdftk
      * @param string $pdfFilePath Filepath to a PDF file
      *
      * @return string FDF file generated from input PDF
+     *
+     * @throws ProcessFailedException
      */
     public function generateFdf(string $pdfFilePath): string
     {
@@ -325,7 +362,10 @@ final readonly class Pdftk
         $process->run();
 
         if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
         }
 
         return $process->getOutput();
@@ -339,6 +379,8 @@ final readonly class Pdftk
      * @param string $pageNamePrefixOutput Prefix for the output page filenames (default: page_)
      *
      * @return void
+     *
+     * @throws ProcessFailedException
      */
     public function burst(string $pdfFilePath, string $outputDir = null, string $pageNamePrefixOutput = 'page_'): void
     {
@@ -352,7 +394,10 @@ final readonly class Pdftk
         $process->run();
 
         if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
         }
     }
 
@@ -362,6 +407,8 @@ final readonly class Pdftk
      * @param string $pdfFilePath Filepath to the input PDF file to be uncompressed.
      *
      * @return string Uncompressed PDF content.
+     *
+     * @throws ProcessFailedException
      */
     public function uncompress(string $pdfFilePath): string
     {
@@ -374,7 +421,10 @@ final readonly class Pdftk
         $process->run();
 
         if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
         }
 
         return $process->getOutput();
@@ -387,7 +437,7 @@ final readonly class Pdftk
      *
      * @return string The compressed content of the PDF file.
      *
-     * @throws ProcessFailedException If the compression process fails.
+     * @throws ProcessFailedException
      */
     public function compress(string $pdfFilePath): string
     {
@@ -400,25 +450,12 @@ final readonly class Pdftk
         $process->run();
 
         if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode(),
+            );
         }
 
         return $process->getOutput();
-    }
-
-    private function getExecutablePath(): string
-    {
-        if (null !== $this->executablePath) {
-            return $this->executablePath;
-        }
-
-        $executableFinder = new ExecutableFinder();
-        $executablePath = $executableFinder->find('pdftk');
-
-        if (null === $executablePath) {
-            throw new \RuntimeException('Pdftk not found');
-        }
-
-        return $executablePath;
     }
 }
