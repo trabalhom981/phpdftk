@@ -19,4 +19,10 @@ cs_check:
 test:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpunit --no-coverage
 
+phpstan:
+	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpstan analyse
+
+phpstan-baseline:
+	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpstan analyse -b
+
 quality: cs_fix test

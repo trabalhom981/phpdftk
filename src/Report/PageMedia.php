@@ -4,7 +4,7 @@ namespace Qdequippe\PHPDFtk\Report;
 
 final readonly class PageMedia
 {
-    private ?int $number;
+    private int $number;
 
     private ?float $rotation;
 
@@ -18,6 +18,10 @@ final readonly class PageMedia
      */
     private array $dimensions;
 
+    /**
+     * @param int[] $rect
+     * @param int[] $dimensions
+     */
     public function __construct(int $number, ?float $rotation = null, array $rect = [], array $dimensions = [])
     {
         $this->number = $number;
@@ -26,7 +30,7 @@ final readonly class PageMedia
         $this->dimensions = $dimensions;
     }
 
-    public function getNumber(): ?int
+    public function getNumber(): int
     {
         return $this->number;
     }

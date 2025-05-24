@@ -10,3 +10,5 @@
 /VERSIONING.md export-ignore
 /.php-cs-fixer.php export-ignore
 /rector.php export-ignore
+/phpstan.neon.dist export-ignore
+/phpstan-baseline.neon export-ignore

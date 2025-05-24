@@ -46,6 +46,9 @@ final readonly class Report
         $this->infos = $infos;
     }
 
+    /**
+     * @return Info[]
+     */
     public function getInfos(): array
     {
         return $this->infos;

@@ -7,7 +7,7 @@ final class Choice extends Field
     /**
      * @var string[]
      */
-    private ?array $stateOption;
+    private array $stateOption;
 
     /**
      * @param string[] $stateOption

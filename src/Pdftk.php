@@ -64,7 +64,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
 
@@ -95,7 +95,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
 
@@ -127,7 +127,7 @@ final readonly class Pdftk
                     $field = new Text(
                         name: $parts['FieldName'],
                         nameAlt: $parts['FieldNameAlt'] ?? null,
-                        flags: $parts['FieldFlags'] ?? null,
+                        flags: $parts['FieldFlags'] ? (int) $parts['FieldFlags'] : null,
                         justification: $parts['FieldJustification'] ?? null,
                         value: $parts['FieldValue'] ?? null,
                     );
@@ -194,7 +194,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
 
@@ -225,7 +225,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
 
@@ -370,7 +370,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
 
@@ -402,7 +402,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
     }
@@ -429,7 +429,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
 
@@ -458,7 +458,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
 
@@ -486,7 +486,7 @@ final readonly class Pdftk
         if (false === $process->isSuccessful()) {
             throw new ProcessFailedException(
                 message: $process->getErrorOutput(),
-                code: $process->getExitCode(),
+                code: $process->getExitCode() ?? 0,
             );
         }
 
