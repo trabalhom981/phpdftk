@@ -121,4 +121,34 @@ final class PdftkTest extends TestCase
         $this->assertFileExists('build/page_02.pdf');
         $this->assertFileExists('build/page_03.pdf');
     }
+
+    public function testUncompress(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $uncompressed = $pdftk->uncompress(__DIR__ . '/data/sample.pdf');
+
+        // Assert
+        $this->assertStringEqualsFile(
+            __DIR__ . '/data/sample_uncompressed.pdf',
+            $uncompressed,
+        );
+    }
+
+    public function testCompress(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $compressed = $pdftk->compress(__DIR__ . '/data/sample.pdf');
+
+        // Assert
+        $this->assertStringEqualsFile(
+            __DIR__ . '/data/sample_compressed.pdf',
+            $compressed,
+        );
+    }
 }

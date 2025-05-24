@@ -27,7 +27,7 @@ final readonly class Pdftk
      */
     public function fillForm(string $pdfFilePath, string $formDataFilePath, bool $flatten = false): string
     {
-        $executablePath = $this->executablePath ?? $this->findExecutablePath();
+        $executablePath = $this->getExecutablePath();
 
         $command = [$executablePath, $pdfFilePath, 'fill_form', $formDataFilePath, 'output', '-'];
 
@@ -55,7 +55,7 @@ final readonly class Pdftk
      */
     public function dumpDataFields(string $pdfFilePath, bool $utf8 = true): array
     {
-        $executablePath = $this->executablePath ?? $this->findExecutablePath();
+        $executablePath = $this->getExecutablePath();
 
         $operation = $utf8 ? 'dump_data_fields_utf8' : 'dump_data_fields';
 
@@ -143,7 +143,7 @@ final readonly class Pdftk
      */
     public function cat(string ...$pdfFilePaths): string
     {
-        $executablePath = $this->executablePath ?? $this->findExecutablePath();
+        $executablePath = $this->getExecutablePath();
 
         $command = [$executablePath];
 
@@ -175,7 +175,7 @@ final readonly class Pdftk
      */
     public function dumpData(string $pdfFilePath, bool $utf8 = true): Report
     {
-        $executablePath = $this->executablePath ?? $this->findExecutablePath();
+        $executablePath = $this->getExecutablePath();
 
         $operation = $utf8 ? 'dump_data_utf8' : 'dump_data';
 
@@ -317,7 +317,7 @@ final readonly class Pdftk
      */
     public function generateFdf(string $pdfFilePath): string
     {
-        $executablePath = $this->executablePath ?? $this->findExecutablePath();
+        $executablePath = $this->getExecutablePath();
 
         $command = [$executablePath, $pdfFilePath, 'generate_fdf', 'output', '-'];
 
@@ -342,7 +342,7 @@ final readonly class Pdftk
      */
     public function burst(string $pdfFilePath, string $outputDir = null, string $pageNamePrefixOutput = 'page_'): void
     {
-        $executablePath = $this->executablePath ?? $this->findExecutablePath();
+        $executablePath = $this->getExecutablePath();
 
         $outputDir ??= sys_get_temp_dir();
 
@@ -356,8 +356,62 @@ final readonly class Pdftk
         }
     }
 
-    private function findExecutablePath(): string
+    /**
+     * Removes compression from a PDF file to create an uncompressed version.
+     *
+     * @param string $pdfFilePath Filepath to the input PDF file to be uncompressed.
+     *
+     * @return string Uncompressed PDF content.
+     */
+    public function uncompress(string $pdfFilePath): string
     {
+        $executablePath = $this->getExecutablePath();
+
+        $command = [$executablePath, $pdfFilePath, 'output', '-', 'uncompress'];
+        ;
+
+        $process = new Process($command);
+        $process->run();
+
+        if (false === $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        return $process->getOutput();
+    }
+
+    /**
+     * Compresses the specified PDF file and returns the compressed output.
+     *
+     * @param string $pdfFilePath The file path of the PDF to be compressed.
+     *
+     * @return string The compressed content of the PDF file.
+     *
+     * @throws ProcessFailedException If the compression process fails.
+     */
+    public function compress(string $pdfFilePath): string
+    {
+        $executablePath = $this->getExecutablePath();
+
+        $command = [$executablePath, $pdfFilePath, 'output', '-', 'compress'];
+        ;
+
+        $process = new Process($command);
+        $process->run();
+
+        if (false === $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        return $process->getOutput();
+    }
+
+    private function getExecutablePath(): string
+    {
+        if (null !== $this->executablePath) {
+            return $this->executablePath;
+        }
+
         $executableFinder = new ExecutableFinder();
         $executablePath = $executableFinder->find('pdftk');
 
