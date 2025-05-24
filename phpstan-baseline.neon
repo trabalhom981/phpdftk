@@ -13,18 +13,6 @@ parameters:
 			path: src/Pdftk.php
 
 		-
-			message: '#^Parameter \$flags of class Qdequippe\\PHPDFtk\\Field\\Button constructor expects int\|null, list\<string\>\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pdftk.php
-
-		-
-			message: '#^Parameter \$flags of class Qdequippe\\PHPDFtk\\Field\\Choice constructor expects int\|null, list\<string\>\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pdftk.php
-
-		-
 			message: '#^Parameter \$justification of class Qdequippe\\PHPDFtk\\Field\\Button constructor expects string\|null, list\<string\>\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -74,12 +62,6 @@ parameters:
 
 		-
 			message: '#^Parameter \$nameAlt of class Qdequippe\\PHPDFtk\\Field\\Text constructor expects string\|null, list\<string\>\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pdftk.php
-
-		-
-			message: '#^Parameter \$pageNumber of class Qdequippe\\PHPDFtk\\Report\\Bookmark constructor expects int\|null, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Pdftk.php
