@@ -88,10 +88,29 @@ final class PdftkTest extends TestCase
         $pdftk = new Pdftk();
 
         // Act
-        $result = $pdftk->cat(__DIR__ . '/data/form.pdf', __DIR__ . '/data/sample.pdf');
+        $result = $pdftk->cat(pdfFilePaths: [__DIR__ . '/data/form.pdf', __DIR__ . '/data/sample.pdf']);
 
         // Assert
         $filename = sys_get_temp_dir() . '/result.pdf';
+        file_put_contents($filename, $result);
+        $report = $pdftk->dumpData($filename);
+
+        $this->assertSame(2, $report->getNumberOfPages());
+    }
+
+    public function testExtractSpecificPagesFromSingleFile(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $result = $pdftk->cat(
+            pdfFilePaths: [__DIR__ . '/data/sample-multi-pages.pdf'],
+            pageRanges: ['1', '3']
+        );
+
+        // Assert
+        $filename = sys_get_temp_dir() . '/result_cat_multiple_page.pdf';
         file_put_contents($filename, $result);
         $report = $pdftk->dumpData($filename);
 
@@ -210,7 +229,7 @@ final class PdftkTest extends TestCase
         $pdftk = new Pdftk();
 
         // Act
-        $result = $pdftk->background(
+        $result = $pdftk->stamp(
             __DIR__ . '/data/form.pdf',
             __DIR__ . '/data/sample.pdf'
         );
@@ -218,6 +237,24 @@ final class PdftkTest extends TestCase
         // Assert
         $this->assertStringEqualsFile(
             __DIR__ . '/data/stamp.pdf',
+            $result,
+        );
+    }
+
+    public function testRotate(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $result = $pdftk->rotate(
+            __DIR__ . '/data/sample-multi-pages.pdf',
+            ['1east', '2-end'],
+        );
+
+        // Assert
+        $this->assertStringEqualsFile(
+            __DIR__ . '/data/rotate.pdf',
             $result,
         );
     }

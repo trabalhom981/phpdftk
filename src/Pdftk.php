@@ -170,23 +170,21 @@ final readonly class Pdftk
     /**
      * Assembles ("catenates") pages from input PDFs to create a new PDF.
      *
-     * @param string ...$pdfFilePaths Filepath to PDF files.
+     * @param string[] $pdfFilePaths Filepath to PDF files.
+     * @param string[] $pageRanges An array of page ranges specifying the pages to concatenate.
      *
      * @return string PDF concatenated from input PDFs
      *
      * @throws ProcessFailedException If the process execution is unsuccessful.
      */
-    public function cat(string ...$pdfFilePaths): string
+    public function cat(array $pdfFilePaths, array $pageRanges = []): string
     {
         $executablePath = $this->getExecutablePath();
 
         $command = [$executablePath];
-
-        foreach ($pdfFilePaths as $pdfFilePath) {
-            $command[] = $pdfFilePath;
-        }
-
+        array_push($command, ...$pdfFilePaths);
         $command[] = 'cat';
+        array_push($command, ...$pageRanges);
         $command[] = 'output';
         $command[] = '-';
 
@@ -534,6 +532,38 @@ final readonly class Pdftk
         $executablePath = $this->getExecutablePath();
 
         $command = [$executablePath, $pdfFilePath, 'stamp', $stampPdfFilePath, 'output', '-'];
+
+        $process = new Process($command);
+        $process->run();
+
+        if (false === $process->isSuccessful()) {
+            throw new ProcessFailedException(
+                message: $process->getErrorOutput(),
+                code: $process->getExitCode() ?? 0,
+            );
+        }
+
+        return $process->getOutput();
+    }
+
+    /**
+     * Rotates specified pages of the provided PDF file and returns the output.
+     *
+     * @param string $pdfFilePath The file path of the PDF to be processed.
+     * @param array $pageRanges An array of page ranges specifying the pages to rotate.
+     *
+     * @return string The modified content of the PDF file with rotated pages.
+     *
+     * @throws ProcessFailedException If the process execution is unsuccessful.
+     */
+    public function rotate(string $pdfFilePath, array $pageRanges): string
+    {
+        $executablePath = $this->getExecutablePath();
+
+        $command = [$executablePath, $pdfFilePath, 'rotate'];
+        array_push($command, ...$pageRanges);
+        $command[] = 'output';
+        $command[] = '-';
 
         $process = new Process($command);
         $process->run();
