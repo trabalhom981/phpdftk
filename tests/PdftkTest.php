@@ -62,4 +62,37 @@ final class PdftkTest extends TestCase
         $this->assertEquals(3, $countText);
         $this->assertEquals(1, $countChoice);
     }
+
+    public function testCat(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $result = $pdftk->cat(__DIR__ . '/data/form.pdf', __DIR__ . '/data/sample.pdf');
+
+        // Assert
+        $filename = sys_get_temp_dir() . '/result.pdf';
+        file_put_contents($filename, $result);
+        $report = $pdftk->dumpData($filename);
+
+        $this->assertSame(2, $report->getNumberOfPages());
+    }
+
+    public function testDumpData(): void
+    {
+        // Arrange
+        $pdftk = new Pdftk();
+
+        // Act
+        $report = $pdftk->dumpData(__DIR__ . '/data/sample.pdf');
+
+        // Assert
+        $this->assertSame(1, $report->getNumberOfPages());
+        $this->assertSame('f7d77b3d22b9f92829d49ff5d78b8f28', $report->getPdfID1());
+        $this->assertSame('f7d77b3d22b9f92829d49ff5d78b8f28', $report->getPdfID0());
+        $this->assertCount(4, $report->getInfos());
+        $this->assertCount(1, $report->getBookmarks());
+        $this->assertCount(1, $report->getPageMedias());
+    }
 }

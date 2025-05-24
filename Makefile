@@ -7,6 +7,9 @@ build:
 bash:
 	$(DOCKER_COMPOSE) run -it --rm php bash
 
+install:
+	$(DOCKER_COMPOSE) run --rm php composer install
+
 cs_fix:
 	$(DOCKER_COMPOSE) run --rm php $(PHP_CS_FIXER) fix
 
@@ -15,3 +18,5 @@ cs_check:
 
 test:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpunit --no-coverage
+
+quality: cs_fix test
