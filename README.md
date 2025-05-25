@@ -4,6 +4,7 @@ PHPDFTK
 [![CI](https://github.com/qdequippe/phpdftk/actions/workflows/ci.yml/badge.svg)](https://github.com/qdequippe/phpdftk/actions/workflows/ci.yml)
 [![Latest Stable Version](https://poser.pugx.org/qdequippe/phpdftk/v/stable)](https://packagist.org/packages/qdequippe/phpdftk)
 [![License](https://poser.pugx.org/qdequippe/phpdftk/license)](https://packagist.org/packages/qdequippe/phpdftk)
+[![codecov](https://codecov.io/gh/qdequippe/phpdftk/graph/badge.svg?token=MLOR43BV97)](https://codecov.io/gh/qdequippe/phpdftk)
 
 PHP wrapper for [PDFtk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/).
 
