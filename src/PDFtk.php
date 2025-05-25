@@ -40,6 +40,21 @@ final readonly class PDFtk
     }
 
     /**
+     * @param string[] $command
+     */
+    private function runCommand(array $command): string
+    {
+        $process = new Process($command);
+        $process->run();
+
+        if (false === $process->isSuccessful()) {
+            throw ProcessFailedException::fromProcess($process);
+        }
+
+        return $process->getOutput();
+    }
+
+    /**
      * Fills the input PDF’s form fields with the data from an FDF file or XFDF file.
      *
      * @param string $pdfFilePath Filepath to a PDF file
@@ -60,17 +75,7 @@ final readonly class PDFtk
             $command[] = 'flatten';
         }
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 
     /**
@@ -91,17 +96,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, $operation, 'output', '-'];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        $output = $process->getOutput();
+        $output = $this->runCommand($command);
 
         $fields = [];
 
@@ -188,17 +183,7 @@ final readonly class PDFtk
         $command[] = 'output';
         $command[] = '-';
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 
     /**
@@ -218,17 +203,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, $operation];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        $output = $process->getOutput();
+        $output = $this->runCommand($command);
 
         $lines = explode("\n", trim($output));
         $pdfID0 = null;
@@ -363,17 +338,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, 'generate_fdf', 'output', '-'];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 
     /**
@@ -393,15 +358,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, 'burst', 'output', sprintf('%s/%s%%02d.pdf', $outputDir, $pageNamePrefixOutput)];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
+        $this->runCommand($command);
     }
 
     /**
@@ -419,17 +376,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, 'output', '-', 'uncompress'];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 
     /**
@@ -447,17 +394,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, 'output', '-', 'compress'];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 
     /**
@@ -475,17 +412,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, 'output', '-'];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 
     /**
@@ -504,17 +431,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, 'background', $backgroundPdfFilePath, 'output', '-'];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 
     /**
@@ -533,17 +450,7 @@ final readonly class PDFtk
 
         $command = [$executablePath, $pdfFilePath, 'stamp', $stampPdfFilePath, 'output', '-'];
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 
     /**
@@ -565,16 +472,6 @@ final readonly class PDFtk
         $command[] = 'output';
         $command[] = '-';
 
-        $process = new Process($command);
-        $process->run();
-
-        if (false === $process->isSuccessful()) {
-            throw new ProcessFailedException(
-                message: $process->getErrorOutput(),
-                code: $process->getExitCode() ?? 0,
-            );
-        }
-
-        return $process->getOutput();
+        return $this->runCommand($command);
     }
 }

@@ -24,7 +24,7 @@ test:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpunit
 
 coverage:
-	$(DOCKER_COMPOSE) run --rm -e XDEBUG_MODE=coverage  php ./vendor/bin/phpunit --coverage-html build
+	$(DOCKER_COMPOSE) run --rm -e XDEBUG_MODE=coverage  php ./vendor/bin/phpunit --coverage-html build/coverage
 
 phpstan:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpstan analyse
