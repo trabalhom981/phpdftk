@@ -40,7 +40,7 @@ final readonly class PDFtk
     }
 
     /**
-     * @param string[] $command
+     * @param scalar[] $command
      */
     private function runCommand(array $command): string
     {
@@ -102,10 +102,13 @@ final readonly class PDFtk
 
         $fieldsData = explode("---", trim($output));
         $fieldsData = array_filter($fieldsData);
+        $fieldsData = explode("---", trim($output));
+        $fieldsData = array_filter($fieldsData);
         foreach ($fieldsData as $fieldData) {
             $fieldParts = explode("\n", $fieldData);
             $fieldParts = array_filter($fieldParts);
-            $parts = [];
+            /** @var array<string, string|string[]> $parts */
+            $parts = ['FieldStateOption' => []];
             foreach ($fieldParts as $fieldPart) {
                 [$fieldPartName, $fieldPartValue] = explode(": ", $fieldPart);
 
@@ -115,39 +118,57 @@ final readonly class PDFtk
                     continue;
                 }
 
-                $parts[$fieldPartName][] = $fieldPartValue;
+                /** @var string[] $options */
+                $options = is_array($parts['FieldStateOption']) ? $parts['FieldStateOption'] : [];
+                $options[] = $fieldPartValue;
+                $parts['FieldStateOption'] = $options;
             }
 
             $field = null;
+            /** @var string $name */
+            $name = $parts['FieldName'];
+            /** @var string|null $nameAlt */
+            $nameAlt = $parts['FieldNameAlt'] ?? null;
+            /** @var int|null $flags */
+            $flags = $parts['FieldFlags'] ? (int) $parts['FieldFlags'] : null;
+            /** @var string|null $justification */
+            $justification = $parts['FieldJustification'] ?? null;
+            /** @var string|null $value */
+            $value = $parts['FieldValue'] ?? null;
+            /** @var string[] $stateOption */
+            $stateOption = $parts['FieldStateOption'] ?? [];
+
             switch ($parts['FieldType']) {
                 case 'Text':
                     $field = new Text(
-                        name: $parts['FieldName'],
-                        nameAlt: $parts['FieldNameAlt'] ?? null,
-                        flags: $parts['FieldFlags'] ? (int) $parts['FieldFlags'] : null,
-                        justification: $parts['FieldJustification'] ?? null,
-                        value: $parts['FieldValue'] ?? null,
+                        name: $name,
+                        nameAlt: $nameAlt,
+                        flags: $flags,
+                        justification: $justification,
+                        value: $value,
                     );
                     break;
                 case 'Button':
                     $field = new Button(
-                        name: $parts['FieldName'],
-                        nameAlt: $parts['FieldNameAlt'] ?? null,
-                        flags: $parts['FieldFlags'] ? (int) $parts['FieldFlags'] : null,
-                        justification: $parts['FieldJustification'] ?? null,
-                        value: $parts['FieldValue'] ?? null,
-                        stateOption: $parts['FieldStateOption'] ?? [],
+                        name: $name,
+                        nameAlt: $nameAlt,
+                        flags: $flags,
+                        justification: $justification,
+                        value: $value,
+                        stateOption: $stateOption,
                     );
                     break;
                 case 'Choice':
+                    /** @var string|null $valueDefault */
+                    $valueDefault = $parts['FieldValueDefault'] ?? null;
                     $field = new Choice(
-                        name: $parts['FieldName'],
-                        nameAlt: $parts['FieldNameAlt'] ?? null,
-                        flags: $parts['FieldFlags'] ? (int) $parts['FieldFlags'] : null,
-                        justification: $parts['FieldJustification'] ?? null,
-                        value: $parts['FieldValue'] ?? null,
-                        valueDefault: $parts['FieldValueDefault'] ?? null,
-                        stateOption: $parts['FieldStateOption'] ?? [],
+                        name: $name,
+                        nameAlt: $nameAlt,
+                        flags: $flags,
+                        justification: $justification,
+                        value: $value,
+                        valueDefault: $valueDefault,
+                        stateOption: $stateOption,
                     );
                     break;
             }
@@ -299,11 +320,17 @@ final readonly class PDFtk
 
         $pageMedias = [];
         foreach ($pageMediasData as $pageMediaData) {
-            $rect = explode(' ', $pageMediaData['PageMediaRect']);
-            array_walk($rect, static fn(&$value): int => $value = (int) $value);
+            $rectArr = explode(' ', $pageMediaData['PageMediaRect']);
+            $rect = [];
+            foreach ($rectArr as $rectValue) {
+                $rect[] = (int) $rectValue;
+            }
 
-            $dimensions = explode(' ', $pageMediaData['PageMediaDimensions']);
-            array_walk($dimensions, static fn(&$value): int => $value = (int) $value);
+            $dimensionsArr = explode(' ', $pageMediaData['PageMediaDimensions']);
+            $dimensions = [];
+            foreach ($dimensionsArr as $dimensionValue) {
+                $dimensions[] = (int) $dimensionValue;
+            }
 
             $pageMedias[] = new PageMedia(
                 number: (int) $pageMediaData['PageMediaNumber'],
@@ -457,7 +484,7 @@ final readonly class PDFtk
      * Rotates specified pages of the provided PDF file and returns the output.
      *
      * @param string $pdfFilePath The file path of the PDF to be processed.
-     * @param array $pageRanges An array of page ranges specifying the pages to rotate.
+     * @param array<string> $pageRanges An array of page ranges specifying the pages to rotate.
      *
      * @return string The modified content of the PDF file with rotated pages.
      *
