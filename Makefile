@@ -11,6 +11,9 @@ bash:
 install:
 	$(DOCKER_COMPOSE) run --rm php composer install
 
+update:
+	$(DOCKER_COMPOSE) run --rm php composer update
+
 cs_fix:
 	$(DOCKER_COMPOSE) run --rm php $(PHP_CS_FIXER) fix
 
@@ -21,7 +24,7 @@ test:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpunit
 
 coverage:
-	$(DOCKER_COMPOSE) run --rm -e XDEBUG_MODE=coverage  php ./vendor/bin/phpunit --coverage-clover coverage.xml
+	$(DOCKER_COMPOSE) run --rm -e XDEBUG_MODE=coverage  php ./vendor/bin/phpunit --coverage-html build
 
 phpstan:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpstan analyse

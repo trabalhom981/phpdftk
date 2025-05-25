@@ -5,12 +5,11 @@
          cacheDirectory=".phpunit.cache"
          executionOrder="depends,defects"
          requireCoverageMetadata="true"
-         beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
          displayDetailsOnPhpunitDeprecations="true"
          failOnPhpunitDeprecation="true"
-         failOnRisky="false"
-         failOnWarning="false">
+         failOnRisky="true"
+         failOnWarning="true">
 
     <testsuites>
         <testsuite name="default">
