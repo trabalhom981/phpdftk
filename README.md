@@ -40,7 +40,7 @@ brew install pdftk-java
 For example, to fill input PDF’s form fields with the data from an FDF file or XFDF file.
 
 ```php
-$pdftk = new \Qdequippe\PHPDFtk\Pdftk();
+$pdftk = new \Qdequippe\PHPDFtk\PDFtk();
 
 $filledPdf = $pdftk->fillForm(
     pdfFilePath: 'path_to_pdf.pdf',

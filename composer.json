@@ -27,7 +27,6 @@
         "phpunit/phpunit": "^12",
         "friendsofphp/php-cs-fixer": "^3.75",
         "phpstan/phpstan": "^2.1",
-        "rector/rector": "^2.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-phpunit": "^2.0"
     },

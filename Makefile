@@ -1,8 +1,9 @@
 DOCKER_COMPOSE=docker compose
 PHP_CS_FIXER=./vendor/bin/php-cs-fixer
+RECTOR=./tools/bin/rector
 
 build:
-	$(DOCKER_COMPOSE) build
+	COMPOSE_BAKE=true $(DOCKER_COMPOSE) build
 
 bash:
 	$(DOCKER_COMPOSE) run -it --rm php bash
@@ -17,7 +18,10 @@ cs_check:
 	$(DOCKER_COMPOSE) run --rm php $(PHP_CS_FIXER) check --diff
 
 test:
-	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpunit --no-coverage
+	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpunit
+
+coverage:
+	$(DOCKER_COMPOSE) run --rm -e XDEBUG_MODE=coverage  php ./vendor/bin/phpunit --coverage-clover coverage.xml
 
 phpstan:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpstan analyse
@@ -26,9 +30,9 @@ phpstan-baseline:
 	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/phpstan analyse -b
 
 rector:
-	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/rector --dry-run
+	$(DOCKER_COMPOSE) run --rm php $(RECTOR) --dry-run
 
 rectify:
-	$(DOCKER_COMPOSE) run --rm php ./vendor/bin/rector
+	$(DOCKER_COMPOSE) run --rm php $(RECTOR)
 
 quality: rector cs_check test

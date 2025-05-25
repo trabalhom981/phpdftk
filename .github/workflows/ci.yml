@@ -32,9 +32,11 @@ jobs:
                   php-version: '8.3'
 
             - uses: "ramsey/composer-install@v3"
+              with:
+                  working-directory: "tools/rector"
 
-            - name: PHP CS Fixer
-              run: ./vendor/bin/rector
+            - name: Rector
+              run: ./tools/bin/rector --dry-run
 
     test:
         runs-on: ubuntu-latest
@@ -60,5 +62,10 @@ jobs:
             - name: Install PDFtk
               run: sudo apt install -y pdftk
 
-            - name: Run tests
-              run: vendor/bin/phpunit
+            - name: Run tests and collect coverage
+              run: vendor/bin/phpunit --coverage-clover coverage.xml
+
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@v5
+              env:
+                  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
