@@ -9,7 +9,7 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - name: 'Setup PHP'
               uses: shivammathur/setup-php@v2
@@ -24,7 +24,7 @@ jobs:
     rector:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - name: 'Setup PHP'
               uses: shivammathur/setup-php@v2
@@ -48,7 +48,7 @@ jobs:
                     - "8.4"
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - name: 'Setup PHP'
               uses: shivammathur/setup-php@v2
